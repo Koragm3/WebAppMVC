@@ -1,5 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using WebAppMVC.Contexts;
+using WebAppMVC.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<ApplicationContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(x =>
+{
+    x.User.RequireUniqueEmail = true;
+    x.SignIn.RequireConfirmedAccount = false;
+    x.Password.RequiredLength = 8;
+}).AddEntityFrameworkStores<ApplicationContext>();
+builder.Services.ConfigureApplicationCookie(x =>
+{
+    x.LoginPath = "/signin";
+});
+
+
+
 
 var app = builder.Build();
 app.UseHsts();
